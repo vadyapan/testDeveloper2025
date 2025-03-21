@@ -38,16 +38,19 @@ export default function ParentTable() {
       <table className={styles.table}>
         <tbody className={styles.tbody}>
           {groupedUserInfo(userInfo).map(user => (
-            <tr
-              key={user.parentId}
-              onClick={() => handleChildrenTable(user.parentId)}
-            >
+            <tr key={user.parentId}>
               <td className={styles.td}>
-                <div className={styles.row}>
+                <div
+                  className={styles.row}
+                  onClick={() => handleChildrenTable(user.parentId)}
+                >
                   <div>Table {user.parentId}</div>
                   {!openChildrenTable[user.parentId] && <div>↓</div>}
                   {openChildrenTable[user.parentId] && <div>↑</div>}
                 </div>
+                {openChildrenTable[user.parentId] && (
+                  <ChildrenTable tableData={user.children} />
+                )}
               </td>
             </tr>
           ))}
