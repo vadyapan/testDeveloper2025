@@ -28,3 +28,12 @@
 .tbody > .tr:nth-of-type(even) {
   background-color: rgb(237 238 242);
 }
+
+.checkbox {
+  margin-left: 6px;
+}
+
+.info {
+  padding-block: 10px;
+  width: 100%;
+}
