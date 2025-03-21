@@ -1,8 +1,11 @@
+import ParentTable from './components/ParentTable/ParentTable';
+import './App.css';
+
 function App() {
   return (
-    <>
-      <h1>Hello World!</h1>
-    </>
+    <div className="container">
+      <ParentTable />
+    </div>
   );
 }
 
