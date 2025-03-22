@@ -1,9 +1,20 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import UserInfo from './UserInfo/UserInfo';
+import SortIcon from '../../icons/SortIcon';
+import { sortByBalanceColumn } from '../../helpers/sortByBalanceColumn';
+import { sortByEmailColumn } from '../../helpers/sortByEmailColumn';
+import { ASC, DESC, NONE } from '../../constants/table';
+import ArrowDownIcon from '../../icons/ArrowDownIcon';
+import ArrowUpIcon from '../../icons/ArrowUpIcon';
 import styles from './ChildrenTable.module.css';
 
 export default function ChildrenTable({ tableData }) {
   const [isActiveFilter, setIsActiveFilter] = useState(false);
-  const dataForTitle = Object.keys(
+  const [sortedData, setSortedData] = useState(tableData);
+  const [sortByBalance, setSortByBalance] = useState(NONE);
+  const [sortByEmail, setSortByEmail] = useState(NONE);
+
+  const columnTitles = Object.keys(
     tableData.map(({ parentId, ...data }) => data)[0],
   );
   const activeFilterData = tableData.filter(user => user.isActive === true);
@@ -12,59 +23,93 @@ export default function ChildrenTable({ tableData }) {
     setIsActiveFilter(!isActiveFilter);
   }
 
+  function handleSort(setSortBy) {
+    setSortBy(prevOrder => {
+      if (prevOrder === NONE) return ASC;
+      if (prevOrder === ASC) return DESC;
+      return NONE;
+    });
+  }
+
+  useEffect(() => {
+    const dataToSort = isActiveFilter ? activeFilterData : tableData;
+    let newSortedData = [...dataToSort];
+
+    if (sortByBalance !== NONE)
+      sortByBalanceColumn(newSortedData, sortByBalance);
+
+    if (sortByEmail !== NONE) sortByEmailColumn(newSortedData, sortByEmail);
+
+    setSortedData(newSortedData);
+  }, [tableData, isActiveFilter, activeFilterData, sortByBalance, sortByEmail]);
+
+  const getSortIcon = sortOrder => {
+    return (
+      (sortOrder === ASC && <ArrowUpIcon />) ||
+      (sortOrder === DESC && <ArrowDownIcon />) ||
+      (sortOrder === NONE && <SortIcon />)
+    );
+  };
+
   return (
     <div className={styles.wrapper}>
       <table className={styles.table}>
         <thead className={styles.thead}>
           <tr className={styles.tr}>
             <th scope="col" className={styles.th}>
-              {dataForTitle[0]}
+              {columnTitles[0]}
             </th>
             <th scope="col" className={styles.th}>
-              {dataForTitle[1]}
-              <input
-                type="checkbox"
-                checked={isActiveFilter}
-                onChange={handleActiveFilter}
-                className={styles.checkbox}
-              />
+              <div className={styles.activeColumn}>
+                {columnTitles[1]}
+                <input
+                  type="checkbox"
+                  checked={isActiveFilter}
+                  onChange={handleActiveFilter}
+                  className={styles.checkbox}
+                />
+              </div>
             </th>
             <th scope="col" className={styles.th}>
-              {dataForTitle[2]}
+              <div className={styles.activeColumn}>
+                {columnTitles[2]}
+                <button
+                  className={styles.button}
+                  onClick={() => handleSort(setSortByBalance)}
+                >
+                  {getSortIcon(sortByBalance)}
+                </button>
+              </div>
             </th>
             <th scope="col" className={styles.th}>
-              {dataForTitle[3]}
+              {columnTitles[3]}
             </th>
             <th scope="col" className={styles.th}>
-              {dataForTitle[4]}
+              {columnTitles[4]}
+              <button
+                className={styles.button}
+                onClick={() => handleSort(setSortByEmail)}
+              >
+                {getSortIcon(sortByEmail)}
+              </button>
             </th>
           </tr>
         </thead>
         <tbody className={styles.tbody}>
-          {!isActiveFilter &&
-            tableData.map(({ id, isActive, balance, name, email }) => (
-              <tr className={styles.tr}>
-                <td className={styles.td}>{id}</td>
-                <td className={styles.td}>{String(isActive)}</td>
-                <td className={styles.td}>{balance}</td>
-                <td className={styles.td}>{name}</td>
-                <td className={styles.td}>{email}</td>
-              </tr>
-            ))}
-          {isActiveFilter &&
-            activeFilterData.map(({ id, isActive, balance, name, email }) => (
-              <tr className={styles.tr}>
-                <td className={styles.td}>{id}</td>
-                <td className={styles.td}>{String(isActive)}</td>
-                <td className={styles.td}>{balance}</td>
-                <td className={styles.td}>{name}</td>
-                <td className={styles.td}>{email}</td>
-              </tr>
-            ))}
+          {sortedData.map(({ id, isActive, balance, name, email }) => (
+            <UserInfo
+              key={id}
+              id={id}
+              isActive={isActive}
+              balance={balance}
+              name={name}
+              email={email}
+            />
+          ))}
           {isActiveFilter && activeFilterData.length === 0 && (
             <tr className={styles.tr}>
               <td
-                colSpan={dataForTitle.length}
+                colSpan={columnTitles.length}
                 className={styles.td}
                 style={{ textAlign: 'center' }}
               >
