@@ -1,13 +1,14 @@
 import { parseBalance } from './parseBalance';
+import { ASC, DESC } from '../constants/table';
 
 export function sortByBalanceColumn(dataToSort, sortByBalance) {
-  return dataToSort.sort((a, b) => {
+  dataToSort.sort((a, b) => {
     const balanceA = parseBalance(a.balance);
     const balanceB = parseBalance(b.balance);
 
-    if (sortByBalance === 'asc') {
+    if (sortByBalance === ASC) {
       return balanceA - balanceB;
-    } else if (sortByBalance === 'desc') {
+    } else if (sortByBalance === DESC) {
       return balanceB - balanceA;
     }
     return 0;

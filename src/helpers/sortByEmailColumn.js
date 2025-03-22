@@ -1,8 +1,10 @@
+import { ASC, DESC } from '../constants/table';
+
 export function sortByEmailColumn(dataToSort, sortByEmail) {
-  return dataToSort.sort((a, b) => {
-    if (sortByEmail === 'asc') {
+  dataToSort.sort((a, b) => {
+    if (sortByEmail === ASC) {
       return a.email.localeCompare(b.email);
-    } else if (sortByEmail === 'desc') {
+    } else if (sortByEmail === DESC) {
       return b.email.localeCompare(a.email);
     }
     return 0;

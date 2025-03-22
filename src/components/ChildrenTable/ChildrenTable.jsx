@@ -24,6 +24,9 @@ export default function ChildrenTable({ tableData }) {
   }
 
   function handleSort(setSortBy) {
+    if (setSortBy === setSortByBalance) setSortByEmail(NONE);
+    if (setSortBy === setSortByEmail) setSortByBalance(NONE);
+
     setSortBy(prevOrder => {
       if (prevOrder === NONE) return ASC;
       if (prevOrder === ASC) return DESC;
@@ -35,10 +38,11 @@ export default function ChildrenTable({ tableData }) {
     const dataToSort = isActiveFilter ? activeFilterData : tableData;
     let newSortedData = [...dataToSort];
 
-    if (sortByBalance !== NONE)
+    if (sortByBalance !== NONE) {
       sortByBalanceColumn(newSortedData, sortByBalance);
-
-    if (sortByEmail !== NONE) sortByEmailColumn(newSortedData, sortByEmail);
+    } else if (sortByEmail !== NONE) {
+      sortByEmailColumn(newSortedData, sortByEmail);
+    }
 
     setSortedData(newSortedData);
   }, [tableData, isActiveFilter, activeFilterData, sortByBalance, sortByEmail]);
