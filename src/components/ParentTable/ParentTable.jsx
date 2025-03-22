@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import groupedUserInfo from '../../helpers/groupedUserInfo';
 import useFetchUserInfo from '../../hooks/useFetchUserInfo';
-import styles from './ParentTable.module.css';
 import ChildrenTable from '../ChildrenTable/ChildrenTable';
+import IconArrowDown from '../../icons/ArrowDownIcon';
+import IconArrowUp from '../../icons/ArrowUpIcon';
+import styles from './ParentTable.module.css';
 
 export default function ParentTable() {
   const [userInfo, loading, error] = useFetchUserInfo();
@@ -45,8 +47,8 @@ export default function ParentTable() {
                   onClick={() => handleChildrenTable(user.parentId)}
                 >
                   <div>Table {user.parentId}</div>
-                  {!openChildrenTable[user.parentId] && <div>↓</div>}
-                  {openChildrenTable[user.parentId] && <div>↑</div>}
+                  {!openChildrenTable[user.parentId] && <IconArrowDown />}
+                  {openChildrenTable[user.parentId] && <IconArrowUp />}
                 </div>
                 {openChildrenTable[user.parentId] && (
                   <ChildrenTable tableData={user.children} />
